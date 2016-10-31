@@ -297,6 +297,15 @@ namespace LinqToDB.Extensions
 #endif
 		}
 
+		public static bool IsMethodEx(this MemberInfo memberInfo)
+		{
+#if NETFX_CORE
+			return memberInfo is MethodInfo;
+#else
+			return memberInfo.MemberType == MemberTypes.Method;
+#endif
+		}
+
 		public static object[] GetCustomAttributesEx(this MemberInfo memberInfo, Type attributeType, bool inherit)
 		{
 #if NETFX_CORE
@@ -601,7 +610,8 @@ namespace LinqToDB.Extensions
 		public static Type ToNullableUnderlying([NotNull] this Type type)
 		{
 			if (type == null) throw new ArgumentNullException("type");
-			return type.IsNullable() ? type.GetGenericArgumentsEx()[0] : type;
+			//return type.IsNullable() ? type.GetGenericArgumentsEx()[0] : type;
+			return Nullable.GetUnderlyingType(type) ?? type;
 		}
 
 		public static IEnumerable<Type> GetDefiningTypes(this Type child, MemberInfo member)
@@ -1025,7 +1035,7 @@ namespace LinqToDB.Extensions
 				member.DeclaringType.GetGenericTypeDefinition() == typeof(Nullable<>);
 		}
 
-		static Dictionary<Type,HashSet<Type>> _castDic = new Dictionary<Type,HashSet<Type>>
+		static readonly Dictionary<Type,HashSet<Type>> _castDic = new Dictionary<Type,HashSet<Type>>
 		{
 			{ typeof(decimal), new HashSet<Type> { typeof(sbyte), typeof(byte),   typeof(short), typeof(ushort), typeof(int), typeof(uint), typeof(long), typeof(ulong), typeof(char)                } },
 			{ typeof(double),  new HashSet<Type> { typeof(sbyte), typeof(byte),   typeof(short), typeof(ushort), typeof(int), typeof(uint), typeof(long), typeof(ulong), typeof(char), typeof(float) } },
@@ -1069,7 +1079,7 @@ namespace LinqToDB.Extensions
 			return false;
 		}
 
-		public static bool EqualsTo(this MemberInfo member1, MemberInfo member2, Type declaringType = null	)
+		public static bool EqualsTo(this MemberInfo member1, MemberInfo member2, Type declaringType = null)
 		{
 			if (ReferenceEquals(member1, member2))
 				return true;

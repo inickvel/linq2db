@@ -98,6 +98,11 @@ CREATE TABLE "LinqDataTypes"
 )
 GO
 
+CREATE OR REPLACE FUNCTION "GetParentByID"(id int)
+RETURNS TABLE ("ParentID" int, "Value1" int)
+AS $$ SELECT * FROM "Parent" WHERE "ParentID" = $1 $$
+LANGUAGE SQL;
+GO
 
 DROP TABLE entity
 GO
@@ -231,7 +236,8 @@ CREATE TABLE AllTypes
 	inetDataType        inet                     NULL,
 	macaddrDataType     macaddr                  NULL,
 
-	xmlDataType         xml                      NULL
+	xmlDataType         xml                      NULL,
+	varBitDataType      varbit                   NULL
 )
 GO
 
@@ -273,7 +279,8 @@ INSERT INTO AllTypes
 	inetDataType,
 	macaddrDataType,
 
-	xmlDataType
+	xmlDataType,
+	varBitDataType
 )
 SELECT
 	NULL,
@@ -310,6 +317,8 @@ SELECT
 	NULL,
 
 	NULL,
+	NULL,
+
 	NULL,
 
 	NULL
@@ -351,7 +360,9 @@ SELECT
 	'192.168.1.1'::inet,
 	'01:02:03:04:05:06'::macaddr,
 
-	XMLPARSE (DOCUMENT'<root><element strattr="strvalue" intattr="12345"/></root>')
+	XMLPARSE (DOCUMENT'<root><element strattr="strvalue" intattr="12345"/></root>'),
+
+	B'1011'
 
 GO
 
