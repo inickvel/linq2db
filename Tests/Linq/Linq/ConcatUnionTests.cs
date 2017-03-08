@@ -156,10 +156,13 @@ namespace Tests.Linq
 		[Test, NorthwindDataContext]
 		public void Concat7(string context)
 		{
-			using (var db = new NorthwindDB())
+			using (var db = new NorthwindDB(context))
+			{
+				var dd = GetNorthwindAsList(context);
 				AreEqual(
-					   Customer.Where(c => c.Orders.Count <= 1).Concat(   Customer.Where(c => c.Orders.Count > 1)),
+					dd.Customer.Where(c => c.Orders.Count <= 1).Concat(dd.Customer.Where(c => c.Orders.Count > 1)),
 					db.Customer.Where(c => c.Orders.Count <= 1).Concat(db.Customer.Where(c => c.Orders.Count > 1)));
+			}
 		}
 
 		[Test, DataContextSource]
@@ -551,7 +554,7 @@ namespace Tests.Linq
 		[Test, NorthwindDataContext]
 		public void ObjectUnion(string context)
 		{
-			using (var db = new NorthwindDB())
+			using (var db = new NorthwindDB(context))
 			{
 				var q1 =
 					from p in db.Product
@@ -669,6 +672,26 @@ namespace Tests.Linq
 					,
 					(from p in db.Person where Sql.Like(p.FirstName, "1") select p.FirstName).Concat(
 					(from p in db.Person where p.ID.ToString().Contains(pattern) select p.FirstName)).Take(10));
+		}
+
+		[Test, DataContextSource]
+		public void ConcatWithUnion(string context)
+		{
+			using (var db = GetDataContext(context))
+				AreEqual(
+					Parent.Select(c => new Parent {ParentID = c.ParentID}). Union(
+					Parent.Select(c => new Parent {ParentID = c.ParentID})).Concat(
+					Parent.Select(c => new Parent {ParentID = c.ParentID}). Union(
+					Parent.Select(c => new Parent {ParentID = c.ParentID})
+						)
+					),
+					db.Parent.Select(c => new Parent {ParentID = c.ParentID}). Union(
+					db.Parent.Select(c => new Parent {ParentID = c.ParentID})).Concat(
+					db.Parent.Select(c => new Parent {ParentID = c.ParentID}). Union(
+					db.Parent.Select(c => new Parent {ParentID = c.ParentID})
+						)
+					)
+				);
 		}
 	}
 }

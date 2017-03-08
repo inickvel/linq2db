@@ -58,7 +58,7 @@ namespace Tests.Model
 
 		public override string ToString()
 		{
-			return string.Format("{{{0,2}, {1,7}, {2}, {3,5}, {4}, {5}}}", ID, MoneyValue, DateTimeValue, BoolValue, GuidValue, SmallIntValue);
+			return string.Format("{{{0,2}, {1,7}, {2:O}, {3,5}, {4}, {5}}}", ID, MoneyValue, DateTimeValue, BoolValue, GuidValue, SmallIntValue);
 		}
 	}
 
@@ -89,10 +89,11 @@ namespace Tests.Model
 				other.MoneyValue                 == MoneyValue    &&
 				other.BoolValue                  == BoolValue     &&
 				other.GuidValue                  == GuidValue     &&
-				other.DateTimeValue.Value.Date   == DateTimeValue.Value.Date &&
-				other.DateTimeValue.Value.Hour   == DateTimeValue.Value.Hour &&
-				other.DateTimeValue.Value.Minute == DateTimeValue.Value.Minute &&
-				other.DateTimeValue.Value.Second == DateTimeValue.Value.Second;
+				other.DateTimeValue              == DateTimeValue;
+				//other.DateTimeValue.Value.Date   == DateTimeValue.Value.Date &&
+				//other.DateTimeValue.Value.Hour   == DateTimeValue.Value.Hour &&
+				//other.DateTimeValue.Value.Minute == DateTimeValue.Value.Minute &&
+				//other.DateTimeValue.Value.Second == DateTimeValue.Value.Second;
 		}
 
 		public override int GetHashCode()
@@ -117,7 +118,7 @@ namespace Tests.Model
 
 		public override string ToString()
 		{
-			return string.Format("{{{0,2}, {1,7}, {2}, {3,5}, {4}}}", ID, MoneyValue, DateTimeValue, BoolValue, GuidValue);
+			return string.Format("{{{0,2}, {1,7}, {2:O}, {3,5}, {4}}}", ID, MoneyValue, DateTimeValue, BoolValue, GuidValue);
 		}
 	}
 }
